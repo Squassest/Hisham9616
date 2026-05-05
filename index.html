@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a56db">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ExamFlow">
+  <meta name="description" content="نظام إدارة الامتحانات — كلية التمريض · جامعة السلطان قابوس">
+
+  <title>ExamFlow — جامعة السلطان قابوس</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png"
+        href="https://www.squ.edu.om/Portals/24/asset/Squ_logo.png">
+  <link rel="apple-touch-icon"
+        href="https://www.squ.edu.om/Portals/24/asset/Squ_logo.png">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap"
+        rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer">
+
+  <!-- App Styles (الترتيب مهم) -->
+  <link rel="stylesheet" href="assets/css/variables.css">
+  <link rel="stylesheet" href="assets/css/theme-dark.css">
+  <link rel="stylesheet" href="assets/css/app.css">
+  <link rel="stylesheet" href="assets/css/login.css">
+
+  <style>
+    /* ── Critical inline animations (pre-CSS load) ── */
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)}
+    }
+    .shake { animation: shake .4s ease; }
+
+    @keyframes floatUp {
+      0%{transform:translateY(0) scale(1);opacity:0} 10%{opacity:.8}
+      90%{opacity:.3} 100%{transform:translateY(-100vh) scale(.5);opacity:0}
+    }
+    @keyframes bellRing {
+      0%,100%{transform:rotate(0)} 15%{transform:rotate(15deg)}
+      30%{transform:rotate(-12deg)} 45%{transform:rotate(10deg)} 60%{transform:rotate(-8deg)}
+    }
+    #notifBell.ring i { animation: bellRing .7s ease; }
+
+    /* ── Splash screen critical styles ── */
+    #loadingScreen {
+      position:fixed; inset:0; z-index:9999;
+      background:#050d1f; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; overflow:hidden;
+    }
+    #loadingScreen::before {
+      content:''; position:absolute; inset:0; z-index:0;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(37,99,235,.22) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(6,182,212,.15) 0%, transparent 55%);
+      animation:bgShift 8s ease infinite alternate;
+    }
+    @keyframes bgShift { from{transform:scale(1)} to{transform:scale(1.08)} }
+
+    .ls-inner {
+      position:relative; z-index:2; display:flex; flex-direction:column;
+      align-items:center; animation:fadeInUp .8s cubic-bezier(.34,1.2,.64,1);
+    }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    @keyframes float {0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)}}
+    @keyframes loadBar {
+      0%{width:0;margin-right:100%} 40%{width:55%} 60%{width:55%;margin-right:0} 100%{width:0;margin-right:0}
+    }
+    @keyframes gradientShift { 0%{background-position:0% 0} 100%{background-position:200% 0} }
+
+    .ls-logo-wrap { position:relative; margin-bottom:28px; }
+    .ls-logo-ring {
+      position:absolute; inset:-16px; border-radius:50%;
+      border:2px solid transparent;
+      background:conic-gradient(from 0deg,rgba(37,99,235,.8),rgba(6,182,212,.6),rgba(124,58,237,.4),rgba(37,99,235,.8)) border-box;
+      -webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor; mask-composite:exclude;
+      animation:spin 3s linear infinite;
+    }
+    .ls-logo-ring2 {
+      position:absolute; inset:-10px; border-radius:50%;
+      border:1px solid rgba(255,255,255,.1);
+      animation:spin 5s linear infinite reverse;
+    }
+    .ls-logo-img {
+      width:110px; height:110px; object-fit:contain; display:block; position:relative; z-index:1;
+      animation:float 4s ease-in-out infinite;
+      filter:brightness(0) invert(1); opacity:.95;
+    }
+    .ls-title {
+      font-family:'Cairo',sans-serif; font-size:30px; font-weight:900;
+      color:white; letter-spacing:-.5px; margin-bottom:5px; text-align:center;
+    }
+    .ls-title span {
+      background:linear-gradient(135deg,#60a5fa,#34d399,#a78bfa);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .ls-subtitle {
+      font-size:12.5px; color:rgba(255,255,255,.38); font-weight:500;
+      margin-bottom:32px; letter-spacing:.3px; font-family:'Cairo',sans-serif;
+    }
+    .ls-bar-wrap { width:240px; margin-bottom:16px; }
+    .ls-bar { width:100%; height:3px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden; }
+    .ls-fill {
+      height:100%; border-radius:2px;
+      background:linear-gradient(90deg,#3b82f6,#06b6d4,#8b5cf6,#3b82f6);
+      background-size:200% 100%;
+      animation:loadBar 2s ease-in-out infinite, gradientShift 3s linear infinite;
+    }
+    #lsLoadTxt {
+      font-size:11.5px; color:rgba(255,255,255,.35);
+      font-family:'Cairo',sans-serif; font-weight:500;
+      letter-spacing:.5px; transition:opacity .3s;
+    }
+
+    /* PWA banner */
+    #installBanner {
+      position:fixed; bottom:20px; right:20px;
+      background:linear-gradient(135deg,#1e40af,#2563eb); color:white;
+      padding:10px 16px; border-radius:12px;
+      display:flex; align-items:center; gap:8px;
+      font-size:13px; z-index:9999;
+      box-shadow:0 4px 20px rgba(30,64,175,.4);
+      font-family:'Cairo',sans-serif;
+    }
+  </style>
+</head>
+
+<body class="rtl">
+
+<!-- ══════════════════════════════════════════════════
+     Splash / Loading Screen — Professional SQU
+══════════════════════════════════════════════════ -->
+<div id="loadingScreen">
+  <div class="ls-inner">
+    <!-- Logo with animated ring -->
+    <div class="ls-logo-wrap" style="margin-bottom:28px">
+      <div class="ls-logo-ring"></div>
+      <div class="ls-logo-ring2"></div>
+      <img class="ls-logo-img"
+           src="https://www.squ.edu.om/Portals/24/asset/Squ_logo.png"
+           alt="SQU Logo"
+           onerror="this.outerHTML='<div style=font-size:80px;animation:float 4s ease-in-out infinite>🎓</div>'">
+    </div>
+
+    <!-- University name -->
+    <div style="font-family:'Cairo',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,.5);letter-spacing:.5px;margin-bottom:6px;text-align:center">
+      Sultan Qaboos University · جامعة السلطان قابوس
+    </div>
+
+    <!-- System name -->
+    <div class="ls-title" style="text-align:center;margin-bottom:4px">
+      <span>Exam</span>Flow
+    </div>
+
+    <!-- Subtitle -->
+    <div class="ls-subtitle">نظام إدارة الامتحانات المتكامل · كلية التمريض</div>
+
+    <!-- Progress bar -->
+    <div class="ls-bar-wrap">
+      <div class="ls-bar"><div class="ls-fill"></div></div>
+    </div>
+
+    <!-- Status text -->
+    <div id="lsLoadTxt">جارٍ تحميل النظام...</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     Login Screen  —  classes تتطابق مع login.css
+══════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <!-- خلفية الجامعة -->
+  <div class="login-bg"></div>
+
+  <!-- Orbs -->
+  <div class="login-orb"></div>
+  <div class="login-orb"></div>
+  <div class="login-orb"></div>
+
+  <!-- زر تبديل اللغة -->
+  <button class="lang-toggle" id="langToggleBtnLogin"
+          onclick="I18N?.setLang(I18N?.getLang()==='ar'?'en':'ar')">
+    <i class="fas fa-language"></i>
+    <span>EN</span>
+  </button>
+
+  <!-- البطاقة الرئيسية -->
+  <div class="login-wrap">
+
+    <!-- اللوحة اليسرى (Brand) -->
+    <div class="ll">
+      <div class="ll-glow"></div>
+
+      <!-- شعار الجامعة -->
+      <div class="ll-squ-logo">
+        <img src="https://www.squ.edu.om/Portals/24/asset/Squ_logo.png"
+             alt="SQU Logo"
+             onerror="this.style.display='none'">
+        <div class="ll-squ-txt">
+          <div class="uni">Sultan Qaboos University</div>
+          <div class="college">كلية التمريض</div>
+        </div>
+      </div>
+
+      <!-- شعار النظام -->
+      <div class="ll-logo">
+        <div class="ll-icon">🎓</div>
+        <div class="ll-brand">
+          <h2>ExamFlow</h2>
+          <p>v14 — نظام الامتحانات المتكامل</p>
+        </div>
+      </div>
+
+      <div class="ll-title">
+        إدارة الامتحانات<br>
+        <span>بكفاءة واحترافية</span>
+      </div>
+      <div class="ll-desc">
+        منصة متكاملة لجدولة الامتحانات وإدارة المراقبين
+        وحجز القاعات وتتبع الحضور في الوقت الفعلي.
+      </div>
+
+      <div class="ll-feats">
+        <div class="ll-feat">
+          <div class="ll-feat-ic"><i class="fas fa-calendar-check"></i></div>
+          جدولة ذكية بدون تعارضات
+        </div>
+        <div class="ll-feat">
+          <div class="ll-feat-ic"><i class="fas fa-user-tie"></i></div>
+          إدارة المراقبين والأقسام
+        </div>
+        <div class="ll-feat">
+          <div class="ll-feat-ic"><i class="fas fa-key"></i></div>
+          حجز القاعات بالتقويم الشخصي
+        </div>
+        <div class="ll-feat">
+          <div class="ll-feat-ic"><i class="fas fa-bell"></i></div>
+          إشعارات فورية لجميع المعنيين
+        </div>
+      </div>
+    </div>
+
+    <!-- اللوحة اليمنى (Form) -->
+    <div class="lr">
+
+      <!-- شعار للموبايل فقط -->
+      <div class="lr-mobile-logo" style="display:none;text-align:center;margin-bottom:24px">
+        <img src="https://www.squ.edu.om/Portals/24/asset/Squ_logo.png"
+             style="width:64px;height:64px;object-fit:contain;background:white;border-radius:12px;padding:8px"
+             onerror="this.style.display='none'">
+      </div>
+
+      <div class="lr-hd">
+        <h3>مرحباً بك 👋</h3>
+        <p>سجّل دخولك للمتابعة</p>
+      </div>
+
+      <!-- ── Tabs: موظف / طالب ─────────────────────────── -->
+      <div class="login-tabs" role="tablist">
+        <button type="button" id="tabStaff"   class="login-tab active" data-tab="staff"   role="tab"
+                onclick="window.switchLoginTab&&window.switchLoginTab('staff')">
+          <i class="fas fa-user-tie"></i> الموظفون
+        </button>
+        <button type="button" id="tabStudent" class="login-tab"        data-tab="student" role="tab"
+                onclick="window.switchLoginTab&&window.switchLoginTab('student')">
+          <i class="fas fa-user-graduate"></i> الطلاب
+        </button>
+      </div>
+
+      <!-- ── نموذج الموظف ──────────────────────────────── -->
+      <div id="staffForm" class="login-form-pane">
+        <div class="lf">
+          <label><i class="fas fa-envelope" style="margin-left:5px;opacity:.6"></i>البريد الإلكتروني</label>
+          <input type="email" id="lEmail"
+                 placeholder="user@squ.edu.om"
+                 autocomplete="email"
+                 onkeydown="if(event.key==='Enter')document.getElementById('lPass').focus()">
+        </div>
+
+        <div class="lf">
+          <label><i class="fas fa-lock" style="margin-left:5px;opacity:.6"></i>كلمة المرور</label>
+          <div class="pass-wrap">
+            <input type="password" id="lPass"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   style="padding-left:44px"
+                   onkeydown="if(event.key==='Enter')APP.login()">
+            <span class="pass-eye" id="passEyeBtn"
+                  onclick="(function(){const p=document.getElementById('lPass');const b=document.getElementById('passEyeBtn');p.type=p.type==='password'?'text':'password';b.innerHTML=p.type==='password'?'<i class=fas fa-eye></i>':'<i class=fas fa-eye-slash></i>'})()">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <div id="loginErr" class="login-err"></div>
+
+        <button id="loginBtn" class="btn-login" onclick="APP.login()">
+          <i class="fas fa-sign-in-alt"></i> دخول
+        </button>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.15)"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,.4)">أو</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.15)"></div>
+        </div>
+        <button id="staffBioBtn" class="btn-login" onclick="loginWithBiometric('staff')"
+                style="background:linear-gradient(135deg,rgba(99,102,241,.85),rgba(139,92,246,.9));margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px">
+          <i class="fas fa-fingerprint" style="font-size:20px"></i>
+          <span>دخول بالبصمة</span>
+        </button>
+      </div>
+
+      <!-- ── نموذج الطالب ──────────────────────────────── -->
+      <div id="studentForm" class="login-form-pane" style="display:none">
+        <div class="lf">
+          <label><i class="fas fa-id-card" style="margin-left:5px;opacity:.6"></i>البريد الإلكتروني الجامعي</label>
+          <input type="email" id="studEmailInput"
+                 placeholder="student@squ.edu.om"
+                 autocomplete="email"
+                 onkeydown="if(event.key==='Enter')document.getElementById('studPassInput').focus()">
+        </div>
+
+        <div class="lf">
+          <label><i class="fas fa-lock" style="margin-left:5px;opacity:.6"></i>كلمة المرور</label>
+          <div class="pass-wrap">
+            <input type="password" id="studPassInput"
+                   placeholder="••••••••"
+                   autocomplete="current-password"
+                   style="padding-left:44px"
+                   onkeydown="if(event.key==='Enter')studentLogin()">
+            <span class="pass-eye" id="studPassEyeBtn"
+                  onclick="(function(){const p=document.getElementById('studPassInput');const b=document.getElementById('studPassEyeBtn');p.type=p.type==='password'?'text':'password';b.innerHTML=p.type==='password'?'<i class=fas fa-eye></i>':'<i class=fas fa-eye-slash></i>'})()">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+        </div>
+
+        <div id="studLoginErr" class="login-err"></div>
+
+        <button id="studLoginBtn" class="btn-login" onclick="studentLogin()" style="background:linear-gradient(135deg,#0ea5e9,#2563eb)">
+          <i class="fas fa-sign-in-alt"></i> دخول الطالب
+        </button>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:14px">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.15)"></div>
+          <span style="font-size:11px;color:rgba(255,255,255,.4)">أو</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,.15)"></div>
+        </div>
+        <button id="studBioBtn" class="btn-login" onclick="loginWithBiometric('student')"
+                style="background:linear-gradient(135deg,rgba(6,182,212,.85),rgba(16,185,129,.9));margin-top:12px;display:flex;align-items:center;justify-content:center;gap:10px">
+          <i class="fas fa-fingerprint" style="font-size:20px"></i>
+          <span>دخول بالبصمة</span>
+        </button>
+
+        <div style="margin-top:14px;text-align:center;font-size:11.5px;color:rgba(255,255,255,.45);line-height:1.7">
+          <i class="fas fa-info-circle" style="opacity:.7"></i>
+          استخدم بريدك الجامعي وكلمة المرور التي زوّدتك بها الإدارة<br>
+          <span style="opacity:.7">إن لم تستلم كلمة المرور، تواصل مع منسق الكلية</span>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="margin-top:28px;text-align:center;font-size:11px;color:rgba(255,255,255,.2);display:flex;justify-content:center;gap:8px">
+        <span>ExamFlow v15 — Biometric + Excel Import</span>
+        <span>·</span>
+        <span>جامعة السلطان قابوس</span>
+        <span>·</span>
+        <span id="lrYear">2025</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     App Shell (يُملأ بـ buildAppShell())
+══════════════════════════════════════════════════ -->
+<div id="app" style="display:none"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SCRIPTS — الترتيب مهم جداً
+══════════════════════════════════════════════════ -->
+
+<!-- 0. SheetJS for Excel import -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<!-- 1. Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- 2. Config -->
+<script src="assets/js/config.js"></script>
+
+<!-- 3. Core -->
+<script src="assets/js/core/theme.js"></script>
+<script src="assets/js/core/state.js"></script>
+<script src="assets/js/core/auth.js"></script>
+<script src="assets/js/core/utils.js"></script>
+<script src="assets/js/core/sync.js"></script>
+<script src="assets/js/core/email-service.js"></script>
+<script src="assets/js/core/biometric.js"></script>
+<script src="assets/js/core/geolocation.js"></script>
+
+<!-- 4. i18n -->
+<script src="assets/js/i18n.js"></script>
+
+<!-- 5. UI Shell -->
+<script src="assets/js/ui/app-html.js"></script>
+<script src="assets/js/ui/modals.js"></script>
+<script src="assets/js/ui/shell.js"></script>
+
+<!-- 6. Dashboard & Calendar -->
+<script src="assets/js/pages/dashboard.js"></script>
+<script src="assets/js/pages/dashboards-extended.js"></script>
+<script src="assets/js/pages/calendar.js"></script>
+<script src="assets/js/pages/monitor.js"></script>
+
+<!-- 7. Exams & Proctors -->
+<script src="assets/js/pages/exams.js"></script>
+<script src="assets/js/pages/exam-wizard.js"></script>
+<script src="assets/js/pages/exams-patch.js"></script>
+<script src="assets/js/pages/proctors.js"></script>
+<script src="assets/js/pages/attendance.js"></script>
+<script src="assets/js/pages/biometric-attendance.js"></script>
+<script src="assets/js/pages/qr-attendance.js"></script>
+<script src="assets/js/pages/smart-distribution.js"></script>
+<script src="assets/js/pages/swaps.js"></script>
+
+<!-- 8. Rooms, Bookings -->
+<script src="assets/js/pages/rooms.js"></script>
+<script src="assets/js/pages/bookings.js"></script>
+
+<!-- 9. New Pages v12 -->
+<script src="assets/js/pages/personal-calendar.js"></script>
+<script src="assets/js/pages/cross-dept-requests.js"></script>
+
+<!-- 10. Academic Data -->
+<script src="assets/js/pages/departments.js"></script>
+<script src="assets/js/pages/subjects.js"></script>
+<script src="assets/js/pages/students.js"></script>
+<script src="assets/js/pages/users.js"></script>
+
+<!-- 11. Analytics & Reports -->
+<script src="assets/js/pages/analytics.js"></script>
+<script src="assets/js/pages/notifications.js"></script>
+<script src="assets/js/pages/log.js"></script>
+<script src="assets/js/pages/settings.js"></script>
+
+<!-- 12. Advanced Tools -->
+<script src="assets/js/pages/pdf-export.js"></script>
+<script src="assets/js/pages/digital-seal.js"></script>
+<script src="assets/js/pages/signature-student.js"></script>
+<script src="assets/js/pages/class-compare.js"></script>
+<script src="assets/js/pages/ai-engine.js"></script>
+
+<!-- 13. Main (آخر ملف دائماً) -->
+<script src="assets/js/main.js"></script>
+
+<!-- Inline init — مُغلَّف داخل IIFE لتجنّب تعارض let _deferredInstall مع main.js -->
+<script>
+(function() {
+  // ── Login Tabs (موظف/طالب) — متين 100% ─────────────────────
+  window.switchLoginTab = function(which) {
+    try {
+      const isStudent = which === 'student';
+      const ts  = document.getElementById('tabStaff');
+      const tst = document.getElementById('tabStudent');
+      const sf  = document.getElementById('staffForm');
+      const stf = document.getElementById('studentForm');
+      if (ts)  ts.classList.toggle('active', !isStudent);
+      if (tst) tst.classList.toggle('active', isStudent);
+      // استخدام setProperty مع important لضمان عدم التعارض
+      if (sf)  sf.style.setProperty('display',  isStudent ? 'none'  : 'block', 'important');
+      if (stf) stf.style.setProperty('display', isStudent ? 'block' : 'none',  'important');
+      const e1 = document.getElementById('loginErr');     if (e1) e1.style.display='none';
+      const e2 = document.getElementById('studLoginErr'); if (e2) e2.style.display='none';
+      setTimeout(function() {
+        const target = isStudent ? document.getElementById('studEmailInput')
+                                 : document.getElementById('lEmail');
+        if (target) target.focus();
+      }, 80);
+    } catch(err) { console.error('[switchLoginTab]', err); }
+  };
+
+  // ── Capture-phase delegation — يلتقط الكليك قبل أي شيء آخر
+  document.addEventListener('click', function(e) {
+    const t = e.target && e.target.closest && e.target.closest('[data-tab]');
+    if (t) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.switchLoginTab(t.getAttribute('data-tab'));
+    }
+  }, true); // ← capture: true
+
+  // PWA Service Worker
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('sw.js')
+        .then(function(r){ console.log('[SW] Registered:', r.scope); })
+        .catch(function(e){ console.warn('[SW] Failed:', e.message); });
+    });
+  }
+
+  // تحديث السنة
+  const yrEl = document.getElementById('lrYear');
+  if (yrEl) yrEl.textContent = new Date().getFullYear();
+
+  // جزيئات الخلفية (تعمل بعد تحميل الصفحة)
+  window.addEventListener('DOMContentLoaded', function() {
+    const loginScreen = document.getElementById('loginScreen');
+    if (!loginScreen) return;
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      const size = 3 + Math.random() * 5;
+      p.style.cssText = [
+        'position:absolute',
+        'border-radius:50%',
+        'pointer-events:none',
+        'z-index:1',
+        'width:'  + size + 'px',
+        'height:' + size + 'px',
+        'background:rgba(26,86,219,' + (0.1 + Math.random() * 0.2) + ')',
+        'left:'   + (Math.random() * 100) + '%',
+        'top:'    + (Math.random() * 100) + '%',
+        'animation:floatUp ' + (6 + Math.random() * 10) + 's linear ' + (Math.random() * 6) + 's infinite'
+      ].join(';');
+      loginScreen.appendChild(p);
+    }
+  });
+
+  // ملاحظة: PWA install banner و installPWA معرَّفان في main.js
+  // (أُزيلت النسخة المكررة لأنها كانت تُعلن let _deferredInstall مرة ثانية فترمي
+  //  SyntaxError يُجهض كامل الـ inline script ويمنع تعريف switchLoginTab)
+
+  // ── تسجيل الدخول بالبصمة ─────────────────────────────────────
+  window.loginWithBiometric = async function(mode) {
+    const errEl = mode === 'student'
+      ? document.getElementById('studLoginErr')
+      : document.getElementById('loginErr');
+    const btn = mode === 'student'
+      ? document.getElementById('studBioBtn')
+      : document.getElementById('staffBioBtn');
+    if (!window.PublicKeyCredential) {
+      if (errEl) { errEl.style.display='block'; errEl.textContent='جهازك لا يدعم البصمة.'; }
+      return;
+    }
+    if (btn) { btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> جارٍ التحقق...'; }
+    if (errEl) errEl.style.display='none';
+    try {
+      const result = await AUTH.signInWithBiometric();
+      await APP._startApp();
+      if (btn) { btn.disabled=false; }
+    } catch(e) {
+      if (errEl) { errEl.style.display='block'; errEl.textContent = e.message||'فشل تسجيل الدخول بالبصمة'; }
+      if (btn) { btn.disabled=false; btn.innerHTML='<i class="fas fa-fingerprint" style="font-size:20px"></i><span>دخول بالبصمة</span>'; }
+    }
+  };
+})();
+</script>
+
+</body>
+</html>
