@@ -1,0 +1,77 @@
+/* ═══════════════════════════════════════════════════════════════
+   theme-dark.css — وضع داكن احترافي
+   تفعيل:  <html data-theme="dark">  أو  body.theme-dark
+   ═══════════════════════════════════════════════════════════════ */
+
+:root[data-theme="dark"], body.theme-dark {
+  --bg:        #0a0f1a;
+  --bg2:       #111827;
+  --bg3:       #1a2332;
+  --card:      #131c2b;
+
+  --txt:       #e2e8f0;
+  --txt2:      #94a3b8;
+  --txt3:      #64748b;
+
+  --border:    #1e293b;
+  --border2:   #334155;
+
+  --primary-bg: rgba(37, 99, 235, .12);
+  --teal-bg:    rgba(6, 182, 212, .12);
+  --green-bg:   rgba(16, 185, 129, .12);
+  --red-bg:     rgba(239, 68, 68, .12);
+  --gold-bg:    rgba(245, 158, 11, .12);
+  --purple-bg:  rgba(139, 92, 246, .12);
+
+  --sidebar:    #050a14;
+  --sidebar2:   #0a1220;
+  --sb-act:     rgba(59, 130, 246, .22);
+  --sb-hov:     rgba(255, 255, 255, .04);
+}
+
+:root[data-theme="dark"] body,
+body.theme-dark { background: var(--bg); color: var(--txt); }
+
+:root[data-theme="dark"] .card,
+body.theme-dark .card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea,
+body.theme-dark input,
+body.theme-dark select,
+body.theme-dark textarea {
+  background: var(--bg2);
+  color: var(--txt);
+  border-color: var(--border);
+}
+
+:root[data-theme="dark"] .md,
+body.theme-dark .md {
+  background: var(--card);
+  color: var(--txt);
+}
+
+/* ── Smooth transition بين النمطين ─────────────────────────── */
+html, body, .card, .md, input, select, textarea, button {
+  transition: background-color .25s, color .25s, border-color .25s;
+}
+
+/* ── Theme toggle button ───────────────────────────────────── */
+.theme-toggle {
+  position: relative;
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--txt);
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  transition: .2s;
+}
+.theme-toggle:hover { background: var(--primary-bg); color: var(--primary); border-color: var(--primary); }

@@ -1,0 +1,318 @@
+/* ════════════════════════════════════
+   login.css — ExamFlow Login v7
+   SQU Edition — Premium Interactive
+════════════════════════════════════ */
+
+#loginScreen {
+  position: fixed; inset: 0; z-index: 900; display: none;
+  align-items: center; justify-content: center;
+  background: #03091a;
+  overflow: hidden;
+}
+
+/* SQU Campus Background */
+#loginScreen .login-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sultan_Qaboos_University_main_building.jpg/1200px-Sultan_Qaboos_University_main_building.jpg');
+  background-size: cover; background-position: center;
+  filter: brightness(0.14) saturate(0.6);
+  animation: bgZoom 25s ease infinite alternate;
+}
+@keyframes bgZoom { from{transform:scale(1.0)} to{transform:scale(1.08)} }
+
+/* Layered overlay */
+#loginScreen::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(ellipse at 65% 15%, rgba(37,99,235,.4) 0%, transparent 60%),
+    radial-gradient(ellipse at 15% 85%, rgba(6,182,212,.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 92% 92%, rgba(124,58,237,.18) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(3,9,26,.4) 0%, rgba(3,9,26,.85) 100%);
+}
+
+/* Grid pattern */
+#loginScreen::after {
+  content: ''; position: absolute; inset: 0; z-index: 2;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse at center, black 25%, transparent 75%);
+}
+
+/* Language Toggle */
+.lang-toggle {
+  position: absolute; top: 16px;
+  inset-inline-start: 20px;
+  z-index: 10;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 20px;
+  color: rgba(255,255,255,.75);
+  font-size: 12px; font-weight: 700;
+  padding: 6px 14px; cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: all .2s; backdrop-filter: blur(8px);
+}
+.lang-toggle:hover { background: rgba(255,255,255,.16); color: white; }
+
+/* ── Main Card ── */
+.login-wrap {
+  display: grid; grid-template-columns: 1fr 460px;
+  max-width: 1060px; width: 100%; gap: 0;
+  position: relative; z-index: 5;
+  border-radius: 28px; overflow: hidden;
+  box-shadow: 0 50px 120px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.07);
+  max-height: 92vh;
+  animation: loginIn .65s cubic-bezier(.34,1.15,.64,1);
+}
+@keyframes loginIn { from{opacity:0;transform:scale(.9) translateY(28px)} to{opacity:1;transform:none} }
+
+/* ── Left Panel (Brand) ── */
+.ll {
+  background: linear-gradient(160deg, rgba(4,16,45,.97) 0%, rgba(8,30,75,.95) 100%);
+  padding: 48px 44px; display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.ll::before {
+  content: ''; position: absolute; inset: 0;
+  background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Sultan_Qaboos_University_main_building.jpg/800px-Sultan_Qaboos_University_main_building.jpg');
+  background-size: cover; background-position: center bottom;
+  opacity: .06; filter: sepia(.3);
+}
+.ll::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,16,45,.25) 0%, rgba(4,16,45,.7) 60%, rgba(4,16,45,.98) 100%);
+}
+.ll > * { position: relative; z-index: 1; }
+
+.ll-glow {
+  position: absolute; width: 450px; height: 450px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(37,99,235,.18) 0%, transparent 70%);
+  top: -120px; right: -120px; z-index: 1;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+@keyframes glowPulse {
+  0%,100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: .6; transform: scale(1.1); }
+}
+
+/* ── SQU Logo — Transparent ── */
+.ll-squ-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  text-align: center;
+}
+/* شعار شفاف بدون خلفية */
+.ll-squ-logo img {
+  height: 110px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  filter: brightness(0) invert(1);
+  opacity: .95;
+  animation: float 5s ease-in-out infinite;
+  transition: all .3s;
+}
+.ll-squ-logo img:hover {
+  opacity: 1;
+  filter: brightness(0) invert(1) drop-shadow(0 0 20px rgba(147,197,253,.5));
+}
+.ll-squ-txt { width: 100%; }
+.ll-squ-txt .uni {
+  font-size: 11.5px; color: rgba(255,255,255,.6);
+  font-weight: 600; line-height: 1.5; letter-spacing: .4px;
+}
+.ll-squ-txt .college {
+  font-size: 15.5px; font-weight: 900;
+  color: white; line-height: 1.3; margin-top: 3px;
+  background: linear-gradient(135deg, #ffffff, #93c5fd);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ll-logo {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 22px;
+}
+.ll-icon {
+  width: 52px; height: 52px; border-radius: 15px;
+  background: linear-gradient(135deg, #1e40af, #06b6d4);
+  display: flex; align-items: center; justify-content: center; font-size: 24px;
+  box-shadow: 0 6px 24px rgba(30,64,175,.6), 0 0 0 1px rgba(255,255,255,.1);
+}
+.ll-brand h2 { font-family: 'Cairo', sans-serif; font-size: 22px; font-weight: 900; color: white; }
+.ll-brand p  { font-size: 11px; color: rgba(255,255,255,.45); }
+.ll-title {
+  font-family: 'Tajawal', sans-serif; font-size: 28px; font-weight: 900;
+  color: white; line-height: 1.35; margin-bottom: 12px;
+}
+.ll-title span {
+  background: linear-gradient(135deg, #60a5fa, #34d399, #a78bfa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ll-desc { font-size: 12.5px; color: rgba(255,255,255,.45); line-height: 1.85; margin-bottom: 28px; }
+.ll-feats { display: flex; flex-direction: column; gap: 11px; }
+.ll-feat {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 12.5px; color: rgba(255,255,255,.65); font-weight: 500;
+}
+.ll-feat-ic {
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+  color: #60a5fa;
+}
+
+/* ── Right Panel (Form) ── */
+.lr {
+  background: #0a1628; padding: 46px 38px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative;
+}
+/* Bottom gradient bar */
+.lr::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #1e40af, #06b6d4, #7c3aed);
+  border-radius: 0 0 0 2px;
+}
+
+.lr-hd { margin-bottom: 28px; }
+.lr-hd h3 { font-family: 'Tajawal', sans-serif; font-size: 24px; font-weight: 900; color: white; }
+.lr-hd p  { font-size: 12.5px; color: rgba(255,255,255,.4); margin-top: 5px; }
+
+.lf { margin-bottom: 17px; }
+.lf label { display: block; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.52); margin-bottom: 7px; }
+.lf input {
+  width: 100%; height: 48px; padding: 0 14px;
+  background: rgba(255,255,255,.05);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 12px; color: white; font-size: 14px;
+  transition: all .22s; font-family: inherit;
+}
+.lf input:focus {
+  outline: none; border-color: rgba(59,130,246,.7);
+  background: rgba(255,255,255,.08);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.18);
+}
+.lf input::placeholder { color: rgba(255,255,255,.22); }
+.lf .pass-wrap { position: relative; }
+.lf .pass-eye  {
+  position: absolute; inset-inline-end: 12px; top: 50%; transform: translateY(-50%);
+  cursor: pointer; color: rgba(255,255,255,.35); transition: color .2s;
+}
+.lf .pass-eye:hover { color: var(--primary2); }
+
+.btn-login {
+  width: 100%; height: 50px; border-radius: 14px;
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  color: white; font-size: 15px; font-weight: 800;
+  border: none; cursor: pointer; font-family: inherit;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all .22s;
+  box-shadow: 0 4px 18px rgba(30,64,175,.45), 0 0 0 1px rgba(255,255,255,.08);
+  margin-top: 8px; position: relative; overflow: hidden;
+}
+.btn-login::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.12), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.btn-login:hover {
+  background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
+  box-shadow: 0 6px 28px rgba(30,64,175,.55);
+  transform: translateY(-1px);
+}
+.btn-login:hover::after { opacity: 1; }
+.btn-login:active { transform: scale(.98); }
+.btn-login:disabled { opacity: .55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.login-err {
+  display: none; margin-top: 14px; padding: 11px 14px;
+  background: rgba(220,38,38,.14); border: 1px solid rgba(220,38,38,.28);
+  border-radius: 10px; color: #fca5a5; font-size: 12.5px; font-weight: 600;
+}
+.login-err.show { display: block; }
+
+/* ── Loading Screen ── */
+#loadingScreen {
+  position: fixed; inset: 0; background: #050d1f;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 2000;
+}
+
+/* ── Particles Canvas ── */
+#particlesCanvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+/* ── Animated floating orbs ── */
+.login-orb {
+  position: absolute; border-radius: 50%;
+  pointer-events: none; z-index: 1;
+  animation: orbFloat 14s ease-in-out infinite;
+  filter: blur(50px);
+}
+.login-orb:nth-child(1) { width:320px; height:320px; background:rgba(30,64,175,.16); top:-90px; right:-70px; animation-delay:0s; }
+.login-orb:nth-child(2) { width:220px; height:220px; background:rgba(6,182,212,.13); bottom:-50px; left:-50px; animation-delay:-5s; }
+.login-orb:nth-child(3) { width:160px; height:160px; background:rgba(124,58,237,.11); top:55%; left:55%; animation-delay:-10s; }
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(24px,-24px) scale(1.06); }
+  66%  { transform: translate(-18px,12px) scale(.94); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .login-wrap { grid-template-columns: 1fr; max-height: 100dvh; border-radius: 0; }
+  .ll { display: none; }
+  .lr { padding: 40px 28px; min-height: 100dvh; justify-content: center; }
+  .lang-toggle { top: 12px; }
+}
+@media (max-width: 400px) {
+  .lr { padding: 32px 20px; }
+  .lr-hd h3 { font-size: 20px; }
+}
+@media (max-width: 860px) { .lr-mobile-logo { display: block !important; } }
+
+/* ── Login Tabs ── */
+.login-tabs {
+  display: flex; gap: 6px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.08);
+  border-radius: 13px; padding: 5px; margin-bottom: 20px;
+  position: relative; z-index: 20;
+}
+.login-tab {
+  flex: 1; background: transparent; border: none;
+  color: rgba(255,255,255,.5); font-family: inherit;
+  font-weight: 700; font-size: 13px; padding: 10px 8px;
+  border-radius: 9px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all .22s ease; position: relative; z-index: 21;
+  pointer-events: auto !important; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.login-tab i { font-size: 13px; }
+.login-tab:hover:not(.active) { background: rgba(255,255,255,.06); color: rgba(255,255,255,.8); }
+.login-tab.active {
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(30,64,175,.5);
+}
+.login-form-pane { animation: fadeSlide .3s ease; }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* float animation */
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
